@@ -1,3 +1,4 @@
+
 name: Build Android APK
 
 on:
@@ -28,6 +29,10 @@ jobs:
       run: |
         yes | buildozer init
         sed -i 's/#warn_on_root = 1/warn_on_root = 0/' buildozer.spec
+        # إجبار النظام على القبول التلقائي لجميع تراخيص Android SDK
+        yes | android-update-sdk --accept-licenses || true
+        mkdir -p ~/.android && touch ~/.android/repositories.cfg
+        yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses || true
         buildozer -v android debug
 
     - name: Upload APK Artifact
